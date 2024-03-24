@@ -1,0 +1,9 @@
+alert tcp any any -> any any (msg:”Possible SQL Injection — Inline Comments Detected”; flow:to_server,established; content:”GET”; nocase; http_method; content:”/”; http_uri; pcre:”/\?.*( — |#|\/\*)/”; sid:1000001;)
+
+alert tcp any any -> any any (msg:”Possible Boolean-based Blind SQL Injection Attempt”; flow:to_server,established; content:”GET”; nocase; http_method; content:”/”; http_uri; pcre:”/\?.*(\bselect\b|\bunion\b|\band\b|\bor\b)(?:[^=]*=){2}[^&]*’/i”; sid:1000002;)
+
+alert tcp any any -> any 80 (msg:”Possible SQL Injection — UNION keyword detected”; flow:to_server,established; content:”UNION”; nocase; http_uri; sid:1000003;)
+
+alert tcp any any -> any 80 (msg:”Possible Manual Injection detected”; flow:to_server,established; content:”GET”; http_method; content:”?parameter=malicious_keyword”; http_uri; sid:1000004;)
+
+alert tcp $EXTERNAL_NET any -> $HOME_NET any (msg:"Pssible C99 webshell activity detected"; flow:to_server,established; http_uri; nocase; content:"/save.php?url="; http_uri; nocase; pcre:"/\/save\.php\?url=[^\s]+&id=7821718728974864923874/Ui"; classtype:trojan-activity; sid:1000001; rev:1;)
